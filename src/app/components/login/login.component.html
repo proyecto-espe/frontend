@@ -1,0 +1,36 @@
+<div class="global">
+  <div *ngFor="let image of images1" style="align-items: left;">
+    <img [src]="image.src" [alt]="image.title" class="" style="max-width: 200px;">
+  </div><br>
+
+  <h1 class="w-100 text-center mb-4 title">Iniciar sesión</h1>
+  <form class="form-login" [formGroup]="acceso">
+    <div class="input-container">
+      <label for="email" style="font-size: 40px;">Usuario</label>
+      <input
+        formControlName="usuario"
+        type="text"
+        class="form-control"
+        id="email"
+        placeholder="Ingresa tu usuario"
+        style="font-size: 25px;"
+      />
+      <sub *ngIf="acceso.get('usuario')?.invalid && acceso.get('usuario')?.touched" class="text-danger">Usuario es requerido</sub>
+    </div>
+    <div class="input-container">
+      <label for="password" style="font-size: 40px;">Contraseña</label>
+      <input
+        formControlName="password"
+        type="password"
+        class="form-control"
+        id="password"
+        placeholder="Ingresa tu contraseña"
+        style="font-size: 25px;"
+      />
+      <sub *ngIf="acceso.get('password')?.invalid && acceso.get('password')?.touched" class="text-danger">Contraseña es requerida</sub>
+    </div>
+    <button type="button" class="btn btn-primary btn-block mt-3 w-100"  style="font-size: 30px;" (click)="Login()">
+      Iniciar sesión
+    </button>
+  </form>
+</div>

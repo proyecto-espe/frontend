@@ -1,0 +1,53 @@
+<div class="global">
+    <div>
+        <h1 class="w-100 text-center title">Comprobante de Pago</h1>
+        <form [formGroup]="registro" class="custom-form">
+            <div class="input-container">
+                <label for="voucher">Comprobante de pago</label>
+                <input type="file" class="form-data" id="voucher" (change)="onFileSelected($event)" />
+                <sub *ngIf="validateVoucher()" class="text-danger">{{errors.voucher}}</sub>
+                <small style="color:red">Aqui deberá subir el comprobante de deposito/transferencia</small>
+            </div>
+            <div *ngFor="let image of images">
+                <img [src]="image.src" [alt]="image.title" class="card-img-top"
+                    style="max-width: 100px; text-align: center;">
+            </div>
+
+            <div class="input-container">
+                <label for="ccPagador">Cedula del Pagador</label>
+                <input type="text" class="form-data" id="ccPagador" formControlName="ccPagador" [(ngModel)]="ccPagador"/>
+                <sub *ngIf="validateCCPagador()" class="text-danger">{{errors.ccPagador}}</sub>
+            </div>
+
+
+            <div class="input-container">
+                <label for="nombresPagador">Nombre completo del pagador</label>
+                <input type="text" class="form-data" id="nombresPagador" formControlName="nombresPagador" [(ngModel)]="nombresPagador"/>
+                <sub *ngIf="validateNombresPagador()" class="text-danger">{{errors.nombresPagador}}</sub>
+            </div>
+
+            <div class="input-container">
+                <label for="ccCursante">Cedula del Cursante</label>
+                <input type="text" class="form-data" id="ccCursante" formControlName="ccCursante" [(ngModel)]="ccCursante" readonly/>
+                <sub *ngIf="validateCCCursante()" class="text-danger">{{errors.ccCursante}}</sub>
+            </div>
+            <div class="input-container">
+                <label for="nombresCursante">Nombre completo del cursante</label>
+                <input type="text" class="form-data" id="nombresCursante" formControlName="nombresCursante" [(ngModel)]="nombresCursante" readonly/>
+                <sub *ngIf="validateNombresCursante()"class="text-danger">{{errors.nombresCursante}}</sub>
+            </div>
+            <div class="input-container" style="align-items: center;">
+                <label
+                    for="recaptcha">----------------------------------------------------------------------------</label>
+                <ngx-recaptcha2 formControlName="recaptcha" #captchaElem [siteKey]="siteKey" [useGlobalDomain]="false"
+                    formControlName="recaptcha">
+                </ngx-recaptcha2>
+            </div>
+            <div class="mt-3 w-100">
+                <button type="submit" class="btn btn-primary mt-3 w-100" (click)="saveNewPagoOnBDD()">Enviar</button>
+                <sub *ngIf="errorValidation !== ''" class="text-danger">{{errorValidation}}</sub>
+
+            </div>
+        </form>
+    </div>
+</div>

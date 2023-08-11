@@ -1,0 +1,69 @@
+<div class="global">
+  <h1 class="w-100 text-center title">Inscritos</h1>
+  <div class="container-table">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>FOTOGRAFÍA</th>
+          <th>APELLIDOS</th>
+          <th>NOMBRES</th>
+          <th>CC</th>
+          <th>EDAD</th>
+          <th>SEXO</th>
+          <th>EMERGENCIAS</th>
+          <th>TEL.EMERGENCIA</th>
+          <th>PADRES/TUTOR</th>
+          <th>CURSO</th>
+          <th>VAUCHER</th>
+          <th>ESTADO</th>
+          <th><i class="fa-solid fa-floppy-disk"></i></th>
+          <th><i class="fa-solid fa-user-xmark"></i></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let preinscrito of preinscritos">
+          <td>
+            <div *ngIf="preinscrito.fotopreinscrito !== null && preinscrito.fotopreinscrito !== 'null'">
+              <img [src]="preinscrito.fotopreinscrito" alt="Fotografía" class="img-thumbnail w-50" style="max-width: 100px;">
+            </div>
+          </td>
+          <td>{{ preinscrito.apellidopreinscrito }}</td>
+          <td>{{ preinscrito.nombrepreinscrito }}</td>
+          <td>{{ preinscrito.cedulapreinscrito }}</td>
+          <td>{{ preinscrito.edadpreinscrito }}</td>
+          <td>{{ preinscrito.sexopreinscrito }}</td>
+          <td>{{ preinscrito.emergenciapreinscrito }}</td>
+          <td>{{ preinscrito.telefonopreinscrito }}</td>
+          <td>{{ preinscrito.tutorpreinscrito }}</td>
+          <td>{{ preinscrito.cursopreinscrito }}</td>
+          <td>
+            <div *ngIf="preinscrito.vaucherinscrito === null || preinscrito.vaucherinscrito === 'null'">
+              <img [src]="sinFoto" alt="Fotografía" class="img-thumbnail w-50" style="max-width: 100px;">
+            </div>
+            <div *ngIf="preinscrito.vaucherinscrito !== null && preinscrito.vaucherinscrito !== 'null'">
+              <img [src]="preinscrito.vaucherinscrito" alt="Fotografía" class="img-thumbnail w-50" style="max-width: 100px;">
+            </div>
+          </td>
+          <td>
+            <select [(ngModel)]="preinscrito.estadopreinscrito1">
+              <option value="Revision" [selected]="preinscrito.estadopreinscrito1 === 'Revision'">En Revisión</option>
+              <option value="Aprobado" [selected]="preinscrito.estadopreinscrito1 === 'aprobado'" style="background-color: green; color: white;">Aprobado</option>
+              <option value="Rechazado" [selected]="preinscrito.estadopreinscrito1 === 'rechazado'" style="background-color: red; color: white;">Rechazado</option>
+            </select>
+          </td>
+          <td>
+            <button style="background-color: blue;" (click)="actualizarEstadoPreinscrito(preinscrito)">
+              <i class="fa-solid fa-floppy-disk" style="color: white;"></i>
+            </button>
+          </td>
+          <td>
+            <button style="background-color: red;" (click)="eliminarPreinscrito(preinscrito.idpreinscrito)">
+              <i class="fa-solid fa-user-xmark" style="color: white;"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+

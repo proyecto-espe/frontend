@@ -1,0 +1,88 @@
+.global {
+  width: 100%;
+  min-height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  background-image: url("../src/assets/imagenes/piscina.jpg");
+  background-blend-mode: multiply;
+  background-size: cover;
+  background-repeat: no-repeat;
+  padding: 1rem;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.container-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.title {
+  color: white;
+}
+
+.custom-form {
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+  background: white;
+  flex-wrap: wrap;
+  max-width: 700px;
+  margin-bottom: 3rem;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 10px;
+}
+
+.input-container input,
+.input-container select {
+  padding: 5px;
+  height: 2.5rem;
+}
+
+.form-data {
+  width: 100%;
+  min-width: 300px;
+}
+
+.form-login {
+  width: 100%;
+  max-width: 500px;
+  padding: 1rem;
+  box-sizing: border-box;
+  background: rgb(255, 255, 255);
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  border-radius: 20px;
+}
+
+.td-div {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-registro {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: rgb(37, 103, 209);
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+footer {
+  background: rgb(2, 94, 169);
+  width: 100%;
+  height: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  color: white;
+  font-weight: bold;
+}

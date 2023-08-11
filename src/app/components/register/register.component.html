@@ -1,0 +1,87 @@
+<div class="global">
+  <div>
+    <h1 class="w-100 text-center title">Registro</h1>
+    <form [formGroup]="registro" class="custom-form" enctype="multipart/form-data">
+      
+      <div class="input-container">
+        <label for="foto">Foto</label>
+        <input type="file" class="form-data" id="foto" formControlName="foto" (change)="onFileSelected($event)"/>
+        <sub *ngIf="validateFoto()" class="text-danger">{{errors.foto}}</sub>
+      </div>    
+      <div *ngFor="let image of images">
+        <img [src]="image.src" [alt]="image.title" class="card-img-top" style="max-width: 100px; text-align: center;">
+      </div>
+      <div class="input-container">
+        <label for="apellidos">Apellidos</label>
+        <input type="text" class="form-data" id="apellidos" formControlName="apellidos" [(ngModel)]="apellido"/>
+        <sub *ngIf="validateApellidos()" class="text-danger">{{errors.apellidos}}</sub>
+      </div>
+      <div class="input-container">
+        <label for="nombres">Nombres</label>
+        <input type="text" class="form-data" id="nombres" formControlName="nombres" [(ngModel)]="nombre"/>
+        <sub *ngIf="validateNombres()" class="text-danger">{{errors.nombres}}</sub>
+      </div>
+      <div class="input-container">
+        <label for="cc">CC</label>
+        <input type="text" class="form-data" id="cc" formControlName="cc" [(ngModel)]="cedula"/>
+        <sub *ngIf="validateCC()" class="text-danger">{{errors.cc}}</sub>
+      </div>
+      <div class="input-container">
+        <label for="edad">Edad</label>
+        <input type="number" class="form-data" id="edad" formControlName="edad" [(ngModel)]="edad"/>
+        <sub *ngIf="validateEdad()" class="text-danger">{{errors.edad}}</sub>
+      </div>
+      <div class="input-container">
+        <label for="sexo">Sexo</label>
+        <select class="form-data" id="sexo" formControlName="sexo" [(ngModel)]="sexo">
+          <option value="">Selecciona el género</option>
+          <option value="masculino">Masculino</option>
+          <option value="femenino">Femenino</option>
+        </select>
+        <sub *ngIf="validateSexo()" class="text-danger">{{errors.sexo}}</sub>
+      </div>
+      <div class="input-container">
+        <label for="emergenciaNombre">En emergencia llamar a</label>
+        <input type="text" class="form-data" id="emergenciaNombre" formControlName="emergenciaNombre" [(ngModel)]="emergencia"/>
+        <sub *ngIf="validateEmergenciaNombre()" class="text-danger">{{errors.emergenciaNombre}}</sub>
+      </div>
+      <div class="input-container">
+        <label for="telefonoEmergencia">Teléfono de emergencia</label>
+        <input type="text" class="form-data" id="emergenciaTelefono" formControlName="emergenciaTelefono" [(ngModel)]="telefono"/>
+        <sub *ngIf="validateEmergenciaTelefono()" class="text-danger">{{errors.emergenciaTelefono}}</sub>
+      </div>
+      <div class="input-container">
+        <label for="padresTutor">Nombre padre o tutor</label>
+        <input type="text" class="form-data" id="tutor" formControlName="tutor" [(ngModel)]="tutor"/>
+        <sub *ngIf="validateTutor()" class="text-danger">{{errors.tutor}}</sub>
+      </div>
+      <div class="input-container">
+        <label for="curso">Curso</label>
+        <select class="form-data" id="curso" formControlName="curso" [(ngModel)]="curso">
+          <option value="">Selecciona el curso</option>
+          <option value="basico">Básico --- Precio: $20</option>
+          <option value="intermedio">Intermedio --- Precio: $25</option>
+          <option value="avanzado">Avanzado --- Precio: $30</option>
+          <option value="inicial">Intensivo Inicial --- Precio: $15</option>
+        </select>
+        <sub *ngIf="validateCurso()" class="text-danger">{{errors.curso}}</sub>
+      </div>
+      <div class="input-container">
+        <label for="email">Email</label>
+        <input type="text" class="form-data" id="email" formControlName="email" [(ngModel)]="correo"/>
+        <sub *ngIf="validateEmail()" class="text-danger">{{errors.email}}</sub>
+      </div>
+      <div class="input-container" style="align-items: center;">
+        <label for="recaptcha"
+          class="">----------------------------------------------------------------------------</label>
+        <ngx-recaptcha2 formControlName="recaptcha" #captchaElem [siteKey]="siteKey" [useGlobalDomain]="false"
+          formControlName="recaptcha">
+        </ngx-recaptcha2>
+      </div>
+      <div class="mt-3 w-100">
+        <button type="submit" class="btn btn-primary mt-3 w-100" (click)="saveNewPreinscritoOnBDD()">Enviar</button>
+        <sub *ngIf="errorValidation !== ''" class="text-danger">{{errorValidation}}</sub>
+      </div>
+    </form>
+  </div>
+</div>

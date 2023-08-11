@@ -1,0 +1,53 @@
+<div class="global">
+  <h1 class="w-100 text-center title">¡BIENVENIDO!</h1><br>
+
+  <div *ngFor="let image of images1">
+    <img [src]="image.src" [alt]="image.title" class="" style="max-width: 400px; text-align: center;">
+  </div><br>
+
+  <div style="display: flex; justify-content: center;">
+    <div
+      style="width: 500px; background-color: white; color: black; margin-right: 20px; padding: 20px; border-radius: 10px;">
+      <div class="mission-vision">
+        <h2 style="color: black; text-align: center;">MISION</h2>
+        <p style="font-size: 20px; text-align: justify;">En la Escuela de Natación 'SPARTAN', nuestra misión es
+          brindar a nuestros estudiantes una experiencia integral y enriquecedora en la natación. Nos comprometemos a
+          impartir enseñanza de calidad, fomentar la confianza en el agua y promover estilos de vida saludables a través
+          de la práctica de la natación. Buscamos desarrollar habilidades acuáticas sólidas, potenciar el trabajo en
+          equipo y cultivar el amor por el agua en un entorno seguro y motivador.</p>
+      </div>
+    </div>
+    <div
+      style="width: 500px; background-color: white; color: black; margin-left: 20px; padding: 20px; border-radius: 10px;">
+      <div class="mission-vision">
+        <h2 style="color: black; text-align: center;">VISION</h2>
+        <p style="font-size: 20px; text-align: justify;">Nuestra visión es convertirnos en la principal referencia en
+          la enseñanza de la natación, reconocida por nuestra excelencia educativa y la formación integral de nuestros
+          nadadores.
+          Aspiramos a ser un centro de aprendizaje líder, donde los estudiantes de todas las edades puedan descubrir su
+          potencial acuático, alcanzar sus metas y disfrutar de los beneficios físicos y emocionales que la natación
+          proporciona. Buscamos inspirar a la comunidad a abrazar un estilo de vida activo y saludable a través de la
+          práctica de la natación.</p>
+      </div>
+    </div>
+  </div><br>
+
+  <div style="text-align: center;">
+    <h1 style="color: aliceblue;">CONOCE DE NUESTROS CURSOS</h1>
+    <h2 style="color: aliceblue;">Inicio del siguiente periodo: 01/JUL/2023</h2>
+  </div>
+  <div class="row mt-5">
+    <div class="col-lg-3 col-md-6 col-sm-4 mb-4" *ngFor="let image of images">
+      <div class="card">
+        <img [src]="image.src" [alt]="image.title" class="card-img-top">
+        <div class="card-body">
+          <h5 class="text-center"><strong [innerHTML]="image.title"></strong></h5>
+          <p [innerHTML]="image.description" style="text-align: justify;"></p>
+          <div class="text-center">
+            <a class="btn-registro" href="dashboard/register">Registrate</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
