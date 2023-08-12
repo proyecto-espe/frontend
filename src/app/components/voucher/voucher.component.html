@@ -4,7 +4,7 @@
         <form [formGroup]="registro" class="custom-form">
             <div class="input-container">
                 <label for="voucher">Comprobante de pago</label>
-                <input type="file" class="form-data" id="voucher" (change)="onFileSelected($event)" />
+                <input type="file" class="form-data" id="voucher" (change)="onFileSelected($event)" formControlName="voucher"/>
                 <sub *ngIf="validateVoucher()" class="text-danger">{{errors.voucher}}</sub>
                 <small style="color:red">Aqui deberá subir el comprobante de deposito/transferencia</small>
             </div>

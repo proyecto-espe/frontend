@@ -204,3 +204,66 @@ export function getMessageRechazo() {
   </body>
   </html>`
 }
+
+export function getMessageRecepcionVoucher() {
+  return `<!DOCTYPE html>
+  <html>
+
+  <body>
+
+    <head>
+      <title>Curso de Natación</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f1f1f1;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          margin: 0;
+        }
+
+        .card {
+          background-color: #fff;
+          width: 800px;
+          height: 480px;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          text-align: center;
+        }
+
+        h1 {
+          color: #333;
+        }
+
+        p {
+          color: #2b2a2a;
+          font-size: 23px;
+        }
+      </style>
+    </head>
+    <div>
+      -
+      <center>
+        <div class="card">
+          <img src="Encabezado.png" style="width:800px">
+          <img src="Sello.png" style="max-width: 50px;">
+          <h2 style="text-decoration: underline;">Escuela de Natacion "SPARTAN"</h2>
+
+          <h1>¡Recepcion de Comprobante de Pago!</h1>
+          <p>Gracias por enviarnos el comprobante de pago. Hemos recibido la información y procederemos a verificarla en
+            nuestro sistema.</p>
+          <p>Te notificaremos tan pronto como se complete la verificación y confirmemos tu inscripción.</p>
+
+          <img src="Pie.png" style="width:800px">
+        </div>
+      </center>
+      <br>
+      <div>
+      </div>
+    </div>
+  </body>
+  </html>`
+}

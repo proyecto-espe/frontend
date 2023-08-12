@@ -37,11 +37,16 @@
           <td>{{ preinscrito.tutorpreinscrito }}</td>
           <td>{{ preinscrito.cursopreinscrito }}</td>
           <td>
-            <div *ngIf="preinscrito.vaucherinscrito === null || preinscrito.vaucherinscrito === 'null'">
+            <div *ngIf="preinscrito.fotopago
+            === null || preinscrito.fotopago
+            === 'null'">
               <img [src]="sinFoto" alt="Fotografía" class="img-thumbnail w-50" style="max-width: 100px;">
             </div>
-            <div *ngIf="preinscrito.vaucherinscrito !== null && preinscrito.vaucherinscrito !== 'null'">
-              <img [src]="preinscrito.vaucherinscrito" alt="Fotografía" class="img-thumbnail w-50" style="max-width: 100px;">
+            <div *ngIf="preinscrito.fotopago
+            !== null && preinscrito.fotopago
+            !== 'null'">
+              <img [src]="preinscrito.fotopago
+              " alt="Fotografía" class="img-thumbnail w-50" style="max-width: 100px;">
             </div>
           </td>
           <td>

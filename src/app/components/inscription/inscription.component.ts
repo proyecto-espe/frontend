@@ -103,8 +103,9 @@ export class InscriptionComponent implements OnInit {
 
   async cargarPreinscritos() {
     this.foto = null;
-    await this.PreinscritosService.getPreinscritos().then((data: any) => {
+    await this.PreinscritosService.getPreinscritosAprobados().then((data: any) => {
       this.preinscritos = data;
+      console.log(data)
     })
   }
 }

@@ -4,6 +4,7 @@ import { FormErrors } from '../interfaces/errors';
 import { PreinscritoServiceService } from 'src/app/preinscrito-service.service';
 import { Router } from '@angular/router';
 import { getMessageExito } from 'src/app/utils/messages';
+import { cedulaEcuatorianaValidator } from 'src/app/utils/validators';
 
 /******************** */
 interface PreinscritoData {
@@ -68,26 +69,42 @@ export class RegisterComponent {
 
   async saveNewPreinscritoOnBDD() {
     try {
-      let preinscrito = this.buildAndGetNewPreinscritoObject();
-      preinscrito.fotopreinscrito = await this.toBase64(this.foto);
-      await this.PreinscritosService.savePreinscrito(preinscrito);
-      // Creamos el email
-      const nombre = this.registro.get("nombres")?.value
-      const apellido = this.registro.get("apellidos")?.value
-      const curso = this.registro.get("curso")?.value.toUpperCase()
-      const emailData = {
-        email: this.registro.get("email")?.value,
-        subject: "Registro existoso!!",
-        type: "html",
-        text: getMessageExito(nombre + " " + apellido, curso)
+      //Validamos que todos los campos estén llenos
+      if(this.registro.valid) {
+        let preinscrito = this.buildAndGetNewPreinscritoObject();
+        preinscrito.fotopreinscrito = await this.toBase64(this.foto);
+        const cedulaParaBuscar = preinscrito.cedulapreinscrito
+        //Validamos que la cedula no esté registrada todavia
+        this.PreinscritosService.doPost("consultar", {cedula: cedulaParaBuscar}).subscribe(async (res) =>{
+          // Si la cedula ya existe no dejará registrar otra vez
+          if(res.length > 0) {
+            console.log(res)
+            alert("Ya existe usuario registrado con esa cédula")
+          } else {
+            // Guardamos el usuario
+            await this.PreinscritosService.savePreinscrito(preinscrito);
+            // Creamos el email
+            const nombre = this.registro.get("nombres")?.value
+            const apellido = this.registro.get("apellidos")?.value
+            const curso = this.registro.get("curso")?.value.toUpperCase()
+            const emailData = {
+              email: this.registro.get("email")?.value,
+              subject: "Registro existoso!!",
+              type: "html",
+              text: getMessageExito(nombre + " " + apellido, curso)
+            }
+            // Enviamos el mensaje
+            this.PreinscritosService.sendMail({emailData}).subscribe(res => {
+              this.resetCampos();
+              this.alerta();
+              this.router.navigate(['/dashboard/home']);
+            })
+          }
+        })
+      } else {
+        alert("Asegurese de completar todos los campos del formulario")
       }
 
-      // Enviamos el mensaje
-      this.PreinscritosService.sendMail({emailData}).subscribe(res => {
-        this.resetCampos();
-        this.alerta();
-        this.router.navigate(['/dashboard/home']);
-      })
     } catch (error) {
       console.log(error);
     }
@@ -170,7 +187,7 @@ export class RegisterComponent {
     foto: new FormControl("", [Validators.required, Validators.pattern(/\.(jpg|png)$/i)]),
     nombres: new FormControl("", [Validators.required, Validators.pattern(this.textRegex)]),
     apellidos: new FormControl("", [Validators.required, Validators.pattern(this.textRegex)]),
-    cc: new FormControl("", [Validators.required, Validators.pattern(this.ccRegex)]),
+    cc: new FormControl("", [Validators.required, cedulaEcuatorianaValidator()]),
     edad: new FormControl("", [Validators.required, Validators.pattern(this.edadRegex)]),
     sexo: new FormControl("", [Validators.required]),
     emergenciaNombre: new FormControl("", [Validators.required, Validators.pattern(this.textRegex)]),
@@ -356,9 +373,9 @@ export class RegisterComponent {
     if (
       input?.invalid &&
       input?.touched &&
-      input?.hasError('pattern')
+      input?.hasError('cedulaEcuatoriana')
     ) {
-      this.errors[key] = "Cedula invalida, cedula debe comenzar por 0 o 1 y solo debe tener 10 digitos"
+      this.errors[key] = "Cedula invalida, asegurese de ingresar cédula valida con 10 dígitos"
       return true
     }
 

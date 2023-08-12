@@ -3,6 +3,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { VoucherErrors } from '../interfaces/errors';
 import { PreinscritoServiceService } from 'src/app/preinscrito-service.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { cedulaEcuatorianaValidator } from 'src/app/utils/validators';
+import { getMessageRecepcionVoucher } from 'src/app/utils/messages';
 
 /******************** */
 interface PagoData {
@@ -43,7 +45,7 @@ export class VoucherComponent implements OnInit {
           this.router.navigate(["/dashboard/home"])
         } else {
           const nombre = res[0].apellidopreinscrito + " " + res[0].nombrepreinscrito
-          //this.email =
+          this.email = res[0].correopreinscrito
           console.log(res[0].correopreinscrito
             )
           this.registro.get("ccCursante")?.setValue(cedula)
@@ -54,22 +56,8 @@ export class VoucherComponent implements OnInit {
 
   }
 
-  /*async saveNewPagoOnBDD(){
-    try {
-      await this.PreinscritosService.savePago(this.buildAndGetNewPagoObject())
-      console.log("Registro exitoso");
-      this.resetCampos();
-      this.alerta();
-      this.router.navigate(['/dashboard/home']);
-    } catch (error) {
-      console.log(error);
-    }
-  }*/
-  /************************* */
-
   onFileSelected(event: any) {
     this.vaucher = event.target.files[0];
-    console.log(this.vaucher);
   }
 
   toBase64(file: any) {
@@ -83,31 +71,45 @@ export class VoucherComponent implements OnInit {
 
   async saveNewPagoOnBDD() {
     try {
-      /*
-      const formData = new FormData();
-      formData.append('voucher', this.registro.get('voucher')?.value);
-
-      const pagoData: PagoData = this.buildAndGetNewPagoObject();
-      for (const key in pagoData) {
-        if (pagoData.hasOwnProperty(key)) {
-          formData.append(key, pagoData[key as keyof PagoData]);
-        }
-      }
-      */
-
-      let pagoData: PagoData = this.buildAndGetNewPagoObject();
-      if(this.vaucher){
+      if(this.registro.valid) {
+        let pagoData: PagoData = this.buildAndGetNewPagoObject();
         pagoData.fotopago = await this.toBase64(this.vaucher);
-      }
+        const cedulaParaBuscar = this.registro.get("ccCursante")?.value
+        const emailData = {
+          email: this.email,
+          subject: "¡Recepcion de Comprobante de Pago!",
+          type: "html",
+          text: getMessageRecepcionVoucher()
+        }
 
-      await this.PreinscritosService.savePago(pagoData).then(res => {
-        console.log("Registro exitoso");
-        this.resetCampos();
-        alert('El registro se ha insertado correctamente.');
-        this.router.navigate(['/dashboard/home']);
-      });
+        this.PreinscritosService.doPost("consultar-voucher", {cedula: cedulaParaBuscar}).subscribe(async(res) => {
+          // Si el vaucher ya ha sido cargado antes
+          if(res.length > 0) {
+            alert("Error: Enlace ya ha sido utilizado.")
+            this.router.navigate(['/dashboard/home']);
+          } else {
+            // Se sube el vaucher por primera vez
+            await this.PreinscritosService.savePago(pagoData).then((res:any)=> {
+              if(res.result) {
+                this.resetCampos();
+                this.clearInputs()
+                // Se envia el correo
+                this.PreinscritosService.sendMail({emailData}).subscribe(res=>{
+                  alert('El comprobante de pago ha sido recibido.');
+                  this.router.navigate(['/dashboard/home']);
+                })
+              } else {
+                alert("Error: Comprobante no se ha podido cargar correctamente")
+              }
+            });
+          }
+        })
+      } else {
+        alert("Debe rellenar todos los campos")
+      }
     } catch (error) {
       console.log(error);
+      alert("Error: Comprobante no se ha podido cargar correctamente")
     }
   }
 
@@ -121,19 +123,6 @@ export class VoucherComponent implements OnInit {
     };
     return newPago;
   }
-
-
-  /************************* */
-  /*buildAndGetNewPagoObject() {
-    let newPago = {
-      cedulapago: this.ccPagador,
-      nombrepago: this.nombresPagador,
-      cedulaestudiante: this.ccCursante,
-      nombreestudiante: this.nombresCursante,
-      fotopago: this.vaucher,
-    }
-    return newPago;
-  }*/
 
   //Metodo para resetear los campos
   resetCampos() {
@@ -159,7 +148,7 @@ export class VoucherComponent implements OnInit {
   ccRegex: RegExp = /^[01]\d{9}$/
 
   registro: FormGroup = new FormGroup({
-    ccPagador: new FormControl("", [Validators.required, Validators.pattern(this.ccRegex)]),
+    ccPagador: new FormControl("", [Validators.required, cedulaEcuatorianaValidator()]),
     nombresPagador: new FormControl("", [Validators.required, Validators.pattern(this.textRegex)]),
     ccCursante: new FormControl("", [Validators.required, Validators.pattern(this.ccRegex)]),
     nombresCursante: new FormControl("", [Validators.required, Validators.pattern(this.textRegex)]),
@@ -183,10 +172,10 @@ export class VoucherComponent implements OnInit {
       input?.invalid &&
       input?.touched &&
       input?.hasError('required')
-    ) {
-      this.errors[key] = "Debes seleccionar una voucher"
-      return true;
-    }
+      ) {
+        this.errors[key] = "Debes cargar el voucher del pago"
+        return true;
+      }
 
     if (
       input?.invalid &&
@@ -266,9 +255,9 @@ export class VoucherComponent implements OnInit {
     if (
       input?.invalid &&
       input?.touched &&
-      input?.hasError('pattern')
+      input?.hasError('cedulaEcuatoriana')
     ) {
-      this.errors[key] = "Cedula invalida, cedula debe comenzar por 0 o 1 y solo debe tener 10 digitos"
+      this.errors[key] = "Cedula invalida, asegurese de ingresar cédula valida con 10 dígitos"
       return true
     }
 
@@ -319,14 +308,6 @@ export class VoucherComponent implements OnInit {
     }
 
     return true
-  }
-
-  sendData() {
-    if (this.validateForm()) {
-      console.log("se envia");
-      this.errorValidation = ""
-      this.clearInputs()
-    }
   }
 
   clearInputs() {
