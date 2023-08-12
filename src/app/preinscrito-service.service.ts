@@ -16,8 +16,8 @@ interface email {
 export class PreinscritoServiceService {
 
   //Se crea una variable comun para todos los servicios
-  url = "http://localhost:3000/"
-  //url = "http://44.203.172.51:3000/"
+  //url = "http://localhost:3000/"
+  url = "http://44.203.172.51:3000/"
 
 
   constructor(public http: HttpClient , public https: HttpClient) { }
@@ -82,6 +82,21 @@ export class PreinscritoServiceService {
     });
   }
 
+  //Funcion para eliminar preinscrito
+  deleteInscritoByCedula(cedula: number) {
+    // Promesa para manejar programación asíncrona
+    return new Promise(resolve => {
+      this.http.delete(this.url + 'inscrito/eliminar-cedula/' + cedula).subscribe({
+        next: (data) => {
+          resolve(data);
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      });
+    });
+  }
+
   //Funcion para actualizar preinscrito
   updateEstadoPreinscrito(id: number, nuevoEstado: string, foto: any) {
     return new Promise(resolve => {
@@ -98,9 +113,9 @@ export class PreinscritoServiceService {
   }
 
   //Funcion para actualizar preinscrito
-  updateEstadoPreinscrito1(id: number, nuevoEstado: string, foto: any, fotovoucher: any) {
+  updateEstadoPreinscrito1(id: number, nuevoEstado: string) {
     return new Promise(resolve => {
-      const data = { estadopreinscrito1: nuevoEstado, fotopreinscrito: foto, vaucherinscrito: fotovoucher };
+      const data = { estadopreinscrito1: nuevoEstado};
       this.http.put(this.url + 'preinscrito/actualizar1/' + id, data).subscribe({
         next: (data) => {
           resolve(data);
@@ -160,103 +175,3 @@ export class PreinscritoServiceService {
   }
 
 }
-
-
-/*import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http'
-
-@Injectable({
-  providedIn: 'root'
-})
-export class UsuarioServiceService {
-
-  //Se crea una variable comun para todos los servicios
-  url = "http://localhost:3000/"
-
-
-  constructor(public http: HttpClient, public https: HttpClient) { }
-
-  //Se crea una funcion que permita atrapar datos desde el web service para utilizarlo en la app
-  getUserByCedula(cedula: string) {
-    //Promesa para manejar programacion asincrona
-    return new Promise(resolve => {
-      this.http.get(this.url + 'usuario/' + cedula).subscribe({
-        //Al subscribe se le pasa dos parametros,
-        next: (data) => {
-          resolve(data)
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      })
-    })
-  }
-
-
-  //Se crea una funcion que permita guardar los datos
-  saveUsuario(usuario: any) {
-    //Promesa para manejar programacion asincrona
-    return new Promise(resolve => {
-      this.http.post(this.url + 'usuario', usuario).subscribe({
-        //Al subscribe se le pasa dos parametros,
-        next: (data) => {
-          resolve(data)
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      });
-    });
-  }
-
-  //Se crea una funcion para recuperar todos lo datos
-  getUsers() {
-    //Promesa para manejar programacion asincrona
-    return new Promise(resolve => {
-      this.http.get(this.url + 'usuarios').subscribe({
-        //Al subscribe se le pasa dos parametros,
-        next: (data) => {
-          resolve(data)
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      });
-    });
-  }
-
-  //Se crea una funcion que permita atrapar datos desde el web service para utilizarlo en la app
-  getUserById(id: number) {
-    //Promesa para manejar programacion asincrona
-    return new Promise(resolve => {
-      this.http.get(this.url + 'usuario/getById/' + id).subscribe({
-        //Al subscribe se le pasa dos parametros,
-        next: (data) => {
-          resolve(data)
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      })
-    })
-  }
-
-  ////////////////////////////////////////////////////////////////////////////
-  //Funcion para actualizar los datos
-  updateUser(usuario: any) {
-    const idUsuario = usuario.id;
-    //Promesa para manejar programacion asincrona
-    return new Promise(resolve => {
-      this.http.post(this.url + 'usuario/actualizar/' + idUsuario, usuario).subscribe({
-        //Al subscribe se le pasa dos parametros,
-        next: (data) => {
-          resolve(data)
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      });
-    });
-  }
-
-}*/

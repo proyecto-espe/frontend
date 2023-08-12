@@ -8,10 +8,9 @@ import { getMessageRecepcionVoucher } from 'src/app/utils/messages';
 
 /******************** */
 interface PagoData {
+  idEstudiante: string,
   cedulapago: string;
   nombrepago: string;
-  cedulaestudiante: string;
-  nombreestudiante: string;
   fotopago: any;
 }
 /*************************** */
@@ -29,6 +28,7 @@ export class VoucherComponent implements OnInit {
   public vaucher: any; ///Cambie esto
   siteKey: string = ""
   email: string = ""
+  idEstudiante: string = ""
   constructor(
     public PreinscritosService: PreinscritoServiceService,
     public router: Router,
@@ -46,7 +46,8 @@ export class VoucherComponent implements OnInit {
         } else {
           const nombre = res[0].apellidopreinscrito + " " + res[0].nombrepreinscrito
           this.email = res[0].correopreinscrito
-          console.log(res[0].correopreinscrito
+          this.idEstudiante = res[0].idpreinscrito
+          console.log(res[0]
             )
           this.registro.get("ccCursante")?.setValue(cedula)
           this.registro.get("nombresCursante")?.setValue(nombre)
@@ -74,7 +75,6 @@ export class VoucherComponent implements OnInit {
       if(this.registro.valid) {
         let pagoData: PagoData = this.buildAndGetNewPagoObject();
         pagoData.fotopago = await this.toBase64(this.vaucher);
-        const cedulaParaBuscar = this.registro.get("ccCursante")?.value
         const emailData = {
           email: this.email,
           subject: "¡Recepcion de Comprobante de Pago!",
@@ -82,7 +82,7 @@ export class VoucherComponent implements OnInit {
           text: getMessageRecepcionVoucher()
         }
 
-        this.PreinscritosService.doPost("consultar-voucher", {cedula: cedulaParaBuscar}).subscribe(async(res) => {
+        this.PreinscritosService.doPost("consultar-voucher", {idEstudiante: this.idEstudiante}).subscribe(async(res) => {
           // Si el vaucher ya ha sido cargado antes
           if(res.length > 0) {
             alert("Error: Enlace ya ha sido utilizado.")
@@ -91,10 +91,10 @@ export class VoucherComponent implements OnInit {
             // Se sube el vaucher por primera vez
             await this.PreinscritosService.savePago(pagoData).then((res:any)=> {
               if(res.result) {
-                this.resetCampos();
-                this.clearInputs()
                 // Se envia el correo
                 this.PreinscritosService.sendMail({emailData}).subscribe(res=>{
+                  this.resetCampos();
+                  this.clearInputs()
                   alert('El comprobante de pago ha sido recibido.');
                   this.router.navigate(['/dashboard/home']);
                 })
@@ -115,10 +115,9 @@ export class VoucherComponent implements OnInit {
 
   buildAndGetNewPagoObject(): PagoData {
     let newPago: PagoData = {
+      idEstudiante: this.idEstudiante,
       cedulapago: this.ccPagador,
       nombrepago: this.nombresPagador,
-      cedulaestudiante: this.ccCursante,
-      nombreestudiante: this.nombresCursante,
       fotopago: null,
     };
     return newPago;

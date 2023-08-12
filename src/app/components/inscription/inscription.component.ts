@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppComponent } from 'src/app/app.component';
 import { PreinscritoServiceService } from 'src/app/preinscrito-service.service';
+import { getMessageInscripcionOk, getMessageRechazoVoucher } from 'src/app/utils/messages';
 
 @Component({
   selector: 'app-inscription',
@@ -22,10 +23,10 @@ export class InscriptionComponent implements OnInit {
     public PreinscritosService: PreinscritoServiceService,
     public router: Router,
     private app: AppComponent) {
-    /* if (!app.isLogged()) {
+    if (!app.isLogged()) {
       alert('No tienes permisos para usar este módulo');
       router.navigate(['login']);
-    } */
+    }
   }
 
 
@@ -67,25 +68,58 @@ export class InscriptionComponent implements OnInit {
 
   async actualizarEstadoPreinscrito(preinscrito: any) {
     try {
-      const nuevoEstado = preinscrito.estadopreinscrito1; // Nuevo estado seleccionado
-      let fotovoucher = null;
-      if (this.voucher != null) {
-        fotovoucher = await this.toBase64(this.voucher);
-      } else {
-        fotovoucher = preinscrito.vaucherinscrito;
-      }
+      const nuevoEstado = preinscrito.estadopreinscrito1; // Nuevo estado
+      if (preinscrito.fotopago !== null) {
+        if(nuevoEstado === "Aprobado") {
+          await this.PreinscritosService.updateEstadoPreinscrito1(preinscrito.idpreinscrito, nuevoEstado).then((res: any) => {
+            if(res.status !== "") {
+              const emailData = {
+                email: preinscrito.correopreinscrito,
+                subject: "¡Inscripcion Confirmada!",
+                type: "html",
+                text: getMessageInscripcionOk()
+              }
+              this.PreinscritosService.sendMail({emailData}).subscribe(data => {
+              })
+            } else {
+              alert("ERROR: No se ha podido actualizar el registro")
+            }
+          });
+          this.alerta('Registro actualizado');
+          this.cargarPreinscritos();
+        } else {
+          if(nuevoEstado !== "Rechazado") {
+            await this.PreinscritosService.updateEstadoPreinscrito1(preinscrito.idpreinscrito, nuevoEstado);
+            this.alerta('Registro actualizado');
+            this.cargarPreinscritos();
+          } else {
+            this.PreinscritosService.deletePreinscritoById(preinscrito.idpreinscrito)
+            this.alerta('Comprobante de pago ha sido rechazado y posteriormente se ha eliminado el registro');
+            this.cargarPreinscritos();
+          }
+        }
 
-      let foto = null;
-      if (this.foto != null) {
-        foto = await this.toBase64(this.foto);
       } else {
-        foto = preinscrito.fotopreinscrito;
+        if(nuevoEstado === "Rechazado") {
+          const emailData = {
+            email: preinscrito.correopreinscrito,
+            subject: "¡Pago no encontrado!",
+            type: "html",
+            text: getMessageRechazoVoucher(preinscrito.cedulapreinscrito)
+          }
+          await this.PreinscritosService.updateEstadoPreinscrito1(preinscrito.idpreinscrito, nuevoEstado);
+          this.PreinscritosService.sendMail({emailData}).subscribe(res => {
+            if(res.result) {
+              this.alerta('Pago rechazado, porque no se ha encontrado comprobante. Se ha enviado un mensaje a este usuario para que pueda realizar el pago');
+              this.cargarPreinscritos();
+            } else {
+              alert("No se ha podido actualizar el registro")
+            }
+          })
+        } else {
+          alert("Atención: No es posible actualizar el registro. No hay voucher cargado")
+        }
       }
-
-      await this.PreinscritosService.updateEstadoPreinscrito1(preinscrito.idpreinscrito, nuevoEstado, foto, fotovoucher);
-      console.log('Actualización exitosa');
-      this.alerta('Registro actualizado');
-      this.cargarPreinscritos();
     } catch (error) {
       console.log(error);
     }
@@ -105,7 +139,6 @@ export class InscriptionComponent implements OnInit {
     this.foto = null;
     await this.PreinscritosService.getPreinscritosAprobados().then((data: any) => {
       this.preinscritos = data;
-      console.log(data)
     })
   }
 }
